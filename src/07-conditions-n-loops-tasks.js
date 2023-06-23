@@ -476,8 +476,71 @@ function getMatrixProduct(m1, m2) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const winningCombos = [
+    [
+      [0, 0],
+      [0, 1],
+      [0, 2],
+    ],
+    [
+      [1, 0],
+      [1, 1],
+      [1, 2],
+    ],
+    [
+      [2, 0],
+      [2, 1],
+      [2, 2],
+    ],
+    [
+      [0, 0],
+      [1, 0],
+      [2, 0],
+    ],
+    [
+      [0, 1],
+      [1, 1],
+      [2, 1],
+    ],
+    [
+      [0, 2],
+      [1, 2],
+      [2, 2],
+    ],
+    [
+      [0, 0],
+      [1, 1],
+      [2, 2],
+    ],
+    [
+      [0, 2],
+      [1, 1],
+      [2, 0],
+    ],
+  ];
+
+  let winner;
+
+  winningCombos.some((combo) => {
+    const [coord1, coord2, coord3] = combo;
+    const [x1, y1] = coord1;
+    const [x2, y2] = coord2;
+    const [x3, y3] = coord3;
+
+    if (
+      position[x1][y1]
+      && position[x1][y1] === position[x2][y2]
+      && position[x1][y1] === position[x3][y3]
+    ) {
+      winner = position[x1][y1];
+      return true;
+    }
+
+    return false;
+  });
+
+  return winner;
 }
 
 module.exports = {

@@ -4,6 +4,8 @@ const ClassSelector = require('./classSelector');
 const AttrSelector = require('./attrSelector');
 const PseudoClassSelector = require('./pseudoClassSelector');
 const PseudoElementSelector = require('./pseudoElementSelector');
+const DuplicatedSelectorsError = require('./duplicatedSelectorsError');
+const InvalidSelectorsSequenceError = require('./invalidSelectorsSequenceError');
 
 class SelectorContainer {
   constructor() {
@@ -13,14 +15,10 @@ class SelectorContainer {
   element(value) {
     const prevElem = this.selectors[this.selectors.length - 1];
     if (prevElem instanceof ElementSelector) {
-      throw new Error(
-        'Element, id and pseudo-element should not occur more then one time inside the selector',
-      );
+      throw new DuplicatedSelectorsError();
     }
     if (this.selectors.length !== 0) {
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element',
-      );
+      throw new InvalidSelectorsSequenceError();
     }
     this.selectors.push(new ElementSelector(value));
     return this;
@@ -29,14 +27,10 @@ class SelectorContainer {
   id(value) {
     const prevElem = this.selectors[this.selectors.length - 1];
     if (prevElem instanceof IdSelector) {
-      throw new Error(
-        'Element, id and pseudo-element should not occur more then one time inside the selector',
-      );
+      throw new DuplicatedSelectorsError();
     }
     if (!(prevElem instanceof ElementSelector) && prevElem) {
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element',
-      );
+      throw new InvalidSelectorsSequenceError();
     }
     this.selectors.push(new IdSelector(value));
     return this;
@@ -49,9 +43,7 @@ class SelectorContainer {
       || prevElem instanceof PseudoClassSelector
       || prevElem instanceof PseudoElementSelector
     ) {
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element',
-      );
+      throw new InvalidSelectorsSequenceError();
     }
     this.selectors.push(new ClassSelector(value));
     return this;
@@ -63,9 +55,7 @@ class SelectorContainer {
       prevElem instanceof PseudoClassSelector
       || prevElem instanceof PseudoElementSelector
     ) {
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element',
-      );
+      throw new InvalidSelectorsSequenceError();
     }
     this.selectors.push(new AttrSelector(value));
     return this;
@@ -74,9 +64,7 @@ class SelectorContainer {
   pseudoClass(value) {
     const prevElem = this.selectors[this.selectors.length - 1];
     if (prevElem instanceof PseudoElementSelector) {
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element',
-      );
+      throw new InvalidSelectorsSequenceError();
     }
     this.selectors.push(new PseudoClassSelector(value));
     return this;
@@ -85,9 +73,7 @@ class SelectorContainer {
   pseudoElement(value) {
     const prevElem = this.selectors[this.selectors.length - 1];
     if (prevElem instanceof PseudoElementSelector) {
-      throw new Error(
-        'Element, id and pseudo-element should not occur more then one time inside the selector',
-      );
+      throw new DuplicatedSelectorsError();
     }
     this.selectors.push(new PseudoElementSelector(value));
     return this;
